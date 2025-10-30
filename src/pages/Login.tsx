@@ -1,4 +1,4 @@
-import { useState, type FormEvent, type ChangeEvent } from "react";
+import { useState, type ChangeEvent, type FormEvent } from 'react';
 
 interface FormErrors {
   email?: string;
@@ -6,19 +6,19 @@ interface FormErrors {
 }
 
 export const Login = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [errors, setErrors] = useState<FormErrors>({});
   const [touched, setTouched] = useState({ email: false, password: false });
 
   // メールアドレスのバリデーション
   const validateEmail = (value: string): string | undefined => {
     if (!value) {
-      return "メールアドレスは必須です";
+      return 'メールアドレスは必須です';
     }
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(value)) {
-      return "メールアドレスの形式が正しくありません";
+      return 'メールアドレスの形式が正しくありません';
     }
     return undefined;
   };
@@ -26,10 +26,10 @@ export const Login = () => {
   // パスワードのバリデーション
   const validatePassword = (value: string): string | undefined => {
     if (!value) {
-      return "パスワードは必須です";
+      return 'パスワードは必須です';
     }
     if (value.length < 8) {
-      return "パスワードは8文字以上である必要があります";
+      return 'パスワードは8文字以上である必要があります';
     }
     return undefined;
   };
@@ -102,15 +102,17 @@ export const Login = () => {
     // バリデーション実行
     if (validateForm()) {
       // ログイン処理（ここでは仮の処理）
-      console.log("ログイン成功:", { email, password });
-      alert("ログイン処理を実行します");
+      console.log('ログイン成功:', { email, password });
+      alert('ログイン処理を実行します');
     }
   };
 
   return (
     <div className="min-h-screen grid lg:grid-cols-2">
       <div className="hidden lg:flex flex-col items-center justify-center p-16 bg-gradient-to-br from-purple-500 to-indigo-600 text-white">
-        <div className="text-5xl font-bold mb-6 tracking-tight">📚 BookReview</div>
+        <div className="text-5xl font-bold mb-6 tracking-tight">
+          📚 BookReview
+        </div>
         <p className="text-xl text-center opacity-95 leading-relaxed max-w-md mb-12">
           あなたの読書体験を共有し、新しい本との出会いを見つけよう
         </p>
@@ -147,14 +149,16 @@ export const Login = () => {
               {/* メールアドレス */}
               <div className="form-control">
                 <label htmlFor="email" className="label">
-                  <span className="label-text font-semibold">メールアドレス</span>
+                  <span className="label-text font-semibold">
+                    メールアドレス
+                  </span>
                 </label>
                 <input
                   type="email"
                   id="email"
                   name="email"
                   className={`input input-bordered w-full ${
-                    errors.email ? "input-error" : ""
+                    errors.email ? 'input-error' : ''
                   }`}
                   value={email}
                   onChange={handleEmailChange}
@@ -163,7 +167,10 @@ export const Login = () => {
                 />
                 {errors.email && (
                   <label className="label">
-                    <span className="label-text-alt text-error flex items-center gap-1" role="alert">
+                    <span
+                      className="label-text-alt text-error flex items-center gap-1"
+                      role="alert"
+                    >
                       ⚠ {errors.email}
                     </span>
                   </label>
@@ -179,7 +186,7 @@ export const Login = () => {
                   id="password"
                   name="password"
                   className={`input input-bordered w-full ${
-                    errors.password ? "input-error" : ""
+                    errors.password ? 'input-error' : ''
                   }`}
                   value={password}
                   onChange={handlePasswordChange}
@@ -188,7 +195,10 @@ export const Login = () => {
                 />
                 {errors.password && (
                   <label className="label">
-                    <span className="label-text-alt text-error flex items-center gap-1" role="alert">
+                    <span
+                      className="label-text-alt text-error flex items-center gap-1"
+                      role="alert"
+                    >
                       ⚠ {errors.password}
                     </span>
                   </label>

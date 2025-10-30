@@ -1,4 +1,5 @@
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import { Link, Route, BrowserRouter as Router, Routes } from 'react-router-dom';
+
 import { Login } from './pages/Login';
 
 function App() {
@@ -18,7 +19,9 @@ function Home() {
     <div className="hero min-h-screen bg-gradient-to-br from-purple-500 to-indigo-600">
       <div className="hero-content text-center">
         <div className="max-w-md">
-          <h1 className="text-5xl font-bold text-white mb-6">📚 Book Review App</h1>
+          <h1 className="text-5xl font-bold text-white mb-6">
+            📚 Book Review App
+          </h1>
           <p className="text-xl text-white/90 mb-8">
             書籍レビューアプリへようこそ
           </p>
