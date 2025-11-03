@@ -38,6 +38,16 @@ export default defineConfig([
       '@typescript-eslint/no-non-null-assertion': 'warn', // ! 演算子の使用を警告
       '@typescript-eslint/prefer-optional-chain': 'warn', // ?. の使用を推奨
       '@typescript-eslint/prefer-nullish-coalescing': 'warn', // ?? の使用を推奨
+      '@typescript-eslint/member-ordering': [
+        'warn',
+        {
+          default: {
+            memberTypes: ['signature', 'field', 'constructor', 'method'],
+            optionalityOrder: 'required-first', // 必須プロパティを先に
+            order: 'alphabetically-case-insensitive', // その後アルファベット順
+          },
+        },
+      ],
 
       // パフォーマンス
       'no-await-in-loop': 'warn', // ループ内のawaitを警告
