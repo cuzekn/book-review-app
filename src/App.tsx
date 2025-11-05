@@ -1,34 +1,35 @@
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
-import { Login } from './pages/Login';
+import { Toaster } from 'react-hot-toast';
 
-function App() {
-  return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
-      </Routes>
-    </Router>
-  );
-}
+import { Router } from './routes/Router';
 
-// ホームページコンポーネント
-function Home() {
+export default function App() {
   return (
-    <div className="hero min-h-screen bg-gradient-to-br from-purple-500 to-indigo-600">
-      <div className="hero-content text-center">
-        <div className="max-w-md">
-          <h1 className="text-5xl font-bold text-white mb-6">📚 Book Review App</h1>
-          <p className="text-xl text-white/90 mb-8">
-            書籍レビューアプリへようこそ
-          </p>
-          <Link to="/login" className="btn btn-primary btn-lg">
-            ログインページへ
-          </Link>
-        </div>
-      </div>
+    <div>
+      <Router />
+      <Toaster
+        position="top-center"
+        toastOptions={{
+          duration: 3000,
+          style: {
+            background: '#363636',
+            color: '#fff',
+          },
+          success: {
+            duration: 3000,
+            iconTheme: {
+              primary: '#4ade80',
+              secondary: '#fff',
+            },
+          },
+          error: {
+            duration: 4000,
+            iconTheme: {
+              primary: '#ef4444',
+              secondary: '#fff',
+            },
+          },
+        }}
+      />
     </div>
   );
 }
-
-export default App;
