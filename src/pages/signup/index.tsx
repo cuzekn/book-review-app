@@ -1,8 +1,14 @@
+import { useState } from 'react';
 import { useForm, type SubmitHandler } from 'react-hook-form';
-import { Link } from 'react-router-dom';
+import toast from 'react-hot-toast';
+import { Link, useNavigate } from 'react-router-dom';
 
+import Compressor from 'compressorjs';
+
+import { authApi } from '../../api';
 import { FormInput } from '../../components/FormInput';
 import { ImageUpload } from '../../components/ImageUpload';
+import { getApiErrorMessage } from '../../utils/errorHandling';
 import {
   EMAIL_VALIDATION,
   NAME_VALIDATION,
@@ -16,21 +22,79 @@ type SignUpInputs = {
 };
 
 export const SignUp = () => {
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<SignUpInputs>();
+  const [isLoading, setIsLoading] = useState(false);
+  const [compressedIconFile, setCompressedIconFile] = useState<File | null>(
+    null,
+  );
 
   const handleImageChange = (file: File | null) => {
-    if (file) {
-      console.log('選択された画像:', file.name);
+    if (!file) {
+      setCompressedIconFile(null);
+      return;
     }
+
+    // Compressor.jsで画像をリサイズ
+    new Compressor(file, {
+      maxWidth: 300,
+      maxHeight: 300,
+      quality: 0.8,
+      success: (compressedFile) => {
+        const compressedFileWithName = new File([compressedFile], file.name, {
+          type: compressedFile.type,
+          lastModified: Date.now(),
+        });
+        setCompressedIconFile(compressedFileWithName);
+        console.log('画像を圧縮しました:', {
+          元のサイズ: `${(file.size / 1024).toFixed(2)} KB`,
+          圧縮後: `${(compressedFile.size / 1024).toFixed(2)} KB`,
+        });
+      },
+      error: (err) => {
+        console.error('画像圧縮エラー:', err);
+        toast.error('画像の処理に失敗しました。別の画像をお試しください。');
+      },
+    });
   };
 
-  const onSubmit: SubmitHandler<SignUpInputs> = (data) => {
-    console.log('新規登録データ:', data);
-    alert('新規登録処理を実行します');
+  const uploadIconIfExists = (iconFile: File | null) => {
+    if (!iconFile) return;
+
+    authApi
+      .uploadIcon(iconFile)
+      .catch((iconError) =>
+        console.error('アイコンアップロードエラー:', iconError),
+      );
+  };
+
+  const onSubmit: SubmitHandler<SignUpInputs> = async (data) => {
+    setIsLoading(true);
+    try {
+      // ユーザー登録
+      await authApi.signup(data);
+
+      // アイコンがあればアップロード（失敗しても登録は成功とする）
+      uploadIconIfExists(compressedIconFile);
+
+      toast.success('新規登録に成功しました');
+      console.log('新規登録成功:', data);
+      console.log('iconFile:', compressedIconFile);
+      navigate('/');
+    } catch (error) {
+      console.error('新規登録エラー:', error);
+      const errorMessage = getApiErrorMessage(
+        error,
+        '新規登録に失敗しました。もう一度お試しください。',
+      );
+      toast.error(errorMessage);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -76,7 +140,7 @@ export const SignUp = () => {
             />
 
             <button type="submit" className="btn btn-primary w-full">
-              新規登録
+              {isLoading ? '登録中...' : '新規登録'}
             </button>
           </form>
 

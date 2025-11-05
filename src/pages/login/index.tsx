@@ -1,7 +1,11 @@
+import { useState } from 'react';
 import { useForm, type SubmitHandler } from 'react-hook-form';
-import { Link } from 'react-router-dom';
+import toast from 'react-hot-toast';
+import { Link, useNavigate } from 'react-router-dom';
 
+import { authApi } from '../../api';
 import { FormInput } from '../../components/FormInput';
+import { getApiErrorMessage } from '../../utils/errorHandling';
 import { EMAIL_VALIDATION, PASSWORD_VALIDATION } from '../../utils/validation';
 
 type LoginInputs = {
@@ -10,15 +14,35 @@ type LoginInputs = {
 };
 
 export const Login = () => {
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<LoginInputs>();
+  const [isLoading, setIsLoading] = useState(false);
 
-  const onSubmit: SubmitHandler<LoginInputs> = (data) => {
-    console.log('ログインデータ:', data);
-    alert('ログイン処理を実行します');
+  const onSubmit: SubmitHandler<LoginInputs> = async (data) => {
+    setIsLoading(true);
+    try {
+      await authApi.login(data);
+      console.log('ログイン成功:', data);
+      toast.success('ログインに成功しました');
+      navigate('/');
+    } catch (error) {
+      console.error('ログインエラー:', error);
+      const errorMessage = getApiErrorMessage(
+        error,
+        'ログインに失敗しました。もう一度お試しください。',
+        {
+          401: 'メールアドレスまたはパスワードが正しくありません',
+          404: 'メールアドレスまたはパスワードが正しくありません',
+        },
+      );
+      toast.error(errorMessage);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -53,7 +77,7 @@ export const Login = () => {
             />
 
             <button type="submit" className="btn btn-primary w-full">
-              ログイン
+              {isLoading ? 'ログイン中...' : 'ログイン'}
             </button>
           </form>
 
