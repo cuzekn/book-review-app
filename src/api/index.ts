@@ -9,3 +9,7 @@ export type {
   UserIconResponse,
   AuthResponse,
 } from './auth';
+
+// 書籍APIのエクスポート
+export { bookApi } from './book';
+export type { Book } from './book';
