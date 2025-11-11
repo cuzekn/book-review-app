@@ -10,10 +10,15 @@ export interface Book {
   reviewer: string;
 }
 
+export interface BookSearchParams {
+  offset?: number;
+  limit?: number;
+}
+
 export const bookApi = {
   // 書籍リストの取得
-  getBooks: async (): Promise<Book[]> => {
-    const response = await apiClient.get<Book[]>('/public/books');
+  getBooks: async (params?: BookSearchParams): Promise<Book[]> => {
+    const response = await apiClient.get<Book[]>('/public/books', { params });
     return response.data;
   },
 };
