@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { useEffect } from 'react';
 import { useForm, type SubmitHandler } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { Link, useNavigate } from 'react-router-dom';
 
-import { authApi } from '../../api';
 import { FormInput } from '../../components/FormInput';
+import { useAppDispatch, useAppSelector } from '../../store';
+import { loginUser } from '../../store/auth';
 import { getApiErrorMessage } from '../../utils/errorHandling';
 import { EMAIL_VALIDATION, PASSWORD_VALIDATION } from '../../utils/validation';
 
@@ -14,23 +15,27 @@ type LoginInputs = {
 };
 
 export const Login = () => {
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const { user, loading } = useAppSelector((state) => state.auth);
+
+  // ログイン済みの場合はホームにリダイレクト
+  useEffect(() => {
+    if (user) {
+      navigate('/');
+    }
+  }, [user, navigate]);
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<LoginInputs>();
-  const [isLoading, setIsLoading] = useState(false);
 
   const onSubmit: SubmitHandler<LoginInputs> = async (data) => {
-    setIsLoading(true);
     try {
-      await authApi.login(data);
-      console.log('ログイン成功:', data);
+      await dispatch(loginUser(data)).unwrap();
       toast.success('ログインに成功しました');
-      navigate('/');
     } catch (error) {
-      console.error('ログインエラー:', error);
       const errorMessage = getApiErrorMessage(
         error,
         'ログインに失敗しました。もう一度お試しください。',
@@ -40,8 +45,6 @@ export const Login = () => {
         },
       );
       toast.error(errorMessage);
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -76,8 +79,12 @@ export const Login = () => {
               {...register('password', PASSWORD_VALIDATION)}
             />
 
-            <button type="submit" className="btn btn-primary w-full">
-              {isLoading ? 'ログイン中...' : 'ログイン'}
+            <button
+              type="submit"
+              className="btn btn-primary w-full"
+              disabled={loading}
+            >
+              {loading ? 'ログイン中...' : 'ログイン'}
             </button>
           </form>
 
