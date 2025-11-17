@@ -3,10 +3,12 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { configureStore } from '@reduxjs/toolkit';
 
+import { authSlice } from './auth';
 import { pageSlice } from './book';
 
 export const store = configureStore({
   reducer: {
+    auth: authSlice.reducer,
     page: pageSlice.reducer,
   },
 });
