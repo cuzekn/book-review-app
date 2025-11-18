@@ -1,18 +1,15 @@
 import { MdAccountCircle } from 'react-icons/md';
 import { Link, useNavigate } from 'react-router-dom';
 
-import { useAppDispatch, useAppSelector } from '../store';
-import { logout } from '../store/auth';
+import { useAppSelector } from '../store';
 
 export const Header = () => {
-  const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { user } = useAppSelector((state) => state.auth);
   const userName = user ? user.name : '未設定';
 
-  const handleClickLogout = () => {
-    dispatch(logout());
-    navigate('/');
+  const handleClickProfile = () => {
+    navigate('/profile');
   };
 
   return (
@@ -26,8 +23,8 @@ export const Header = () => {
         {user ? (
           <div
             className="btn btn-ghost cursor-pointer items-center gap-2 hover:bg-base-200"
-            onClick={handleClickLogout}
-            title="ログアウト"
+            onClick={handleClickProfile}
+            title="プロフィールへ移動"
           >
             {user.iconUrl ? (
               <img

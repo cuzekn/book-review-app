@@ -63,6 +63,13 @@ export const authSlice = createSlice({
         state.loading = false;
         state.error = action.error.message ?? '新規登録に失敗しました';
       })
+      // updateUserName
+      .addCase(updateUserName.pending, handlePending)
+      .addCase(updateUserName.fulfilled, handleFulfilled)
+      .addCase(updateUserName.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message ?? 'ユーザー名の更新に失敗しました';
+      })
       // initializeAuth
       .addCase(initializeAuth.pending, handlePending)
       .addCase(initializeAuth.fulfilled, handleFulfilled)
@@ -97,6 +104,19 @@ export const signupUser = createAsyncThunk(
     // 新規登録後にユーザー情報を取得
     const user = await authApi.getUser();
     return { token: response.token, user };
+  },
+);
+
+// ユーザー名更新の非同期thunk
+export const updateUserName = createAsyncThunk(
+  'auth/updateUserName',
+  async (name: string, { getState }) => {
+    const state = getState() as { auth: AuthState };
+    if (!state.auth.token) {
+      throw new Error('ユーザーが認証されていません');
+    }
+    const updatedUser = await authApi.putName(name);
+    return { token: state.auth.token, user: updatedUser };
   },
 );
 

@@ -68,4 +68,10 @@ export const authApi = {
     );
     return response.data;
   },
+
+  // ユーザー名更新
+  putName: async (name: string): Promise<User> => {
+    const response = await apiClient.put<User>('/users', { name });
+    return response.data;
+  },
 };
