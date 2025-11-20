@@ -2,36 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
-/*
-  テーマカラーのカスタマイズ
-  ここで色を変更できます：
-  - --color-primary: ボタンやリンクの色
-  - --color-primary-content: プライマリカラー上のテキスト色
-
-  色の例：
-  #10b981 (緑), #3b82f6 (青), #ef4444 (赤), #8b5cf6 (紫)
-*/
-:root,
-[data-theme='dark'],
-[data-theme='light'] {
-  --color-primary: #10b981 !important;
-  --color-primary-content: #ffffff !important;
-}
-
 @layer components {
-  button.btn-primary {
-    --btn-color: var(--color-primary) !important;
-    --btn-fg: var(--color-primary-content) !important;
-    background-color: var(--color-primary) !important;
-    color: var(--color-primary-content) !important;
-    border-color: var(--color-primary) !important;
-  }
-
-  button.btn-primary:hover:not(:disabled) {
-    background-color: color-mix(
-      in oklab,
-      var(--color-primary),
-      #000 10%
-    ) !important;
+  button.btn,
+  a.btn {
+    background-color: var(--btn-bg);
+    background-image: var(--btn-noise);
+    color: var(--btn-fg);
+    border-color: var(--btn-border);
   }
 }
