@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { FormInput } from '../../components/FormInput';
 import { Header } from '../../components/Header';
 import { useAppDispatch, useAppSelector } from '../../store';
-import { updateUserName } from '../../store/auth';
+import { logout, updateUserName } from '../../store/auth';
 import { getApiErrorMessage } from '../../utils/errorHandling';
 import { NAME_VALIDATION } from '../../utils/validation';
 
@@ -46,6 +46,11 @@ export const Profile = () => {
       toast.error(errorMessage);
     }
   };
+  const handleLogout = () => {
+    dispatch(logout());
+    localStorage.removeItem('token');
+    navigate('/login');
+  };
 
   return (
     <>
@@ -56,9 +61,18 @@ export const Profile = () => {
             <h1 className="card-title mb-3 text-3xl font-bold">
               プロフィール編集
             </h1>
-            <p className="text-base-content/60 mb-6">
-              ユーザー名を変更できます
-            </p>
+            <div className="mb-3 flex flex-row items-center justify-between">
+              <p className="text-base-content/60 mb-6">
+                ユーザー名を変更できます
+              </p>
+              <button
+                type="button"
+                className="btn btn-error px-3 font-bold"
+                onClick={handleLogout}
+              >
+                ログアウト
+              </button>
+            </div>
             <form
               onSubmit={handleSubmit(onSubmit)}
               noValidate
