@@ -13,6 +13,25 @@ export default function App() {
     dispatch(initializeAuth());
   }, [dispatch]);
 
+  // システムのダークモード設定に応じてテーマを設定
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    const updateTheme = (e: MediaQueryListEvent | MediaQueryList) => {
+      const theme = e.matches ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-theme', theme);
+    };
+
+    // 初回設定
+    updateTheme(mediaQuery);
+
+    // システム設定の変更を監視
+    mediaQuery.addEventListener('change', updateTheme);
+
+    return () => {
+      mediaQuery.removeEventListener('change', updateTheme);
+    };
+  }, []);
+
   return (
     <div>
       <Router />
