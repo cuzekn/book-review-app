@@ -15,10 +15,23 @@ export interface BookSearchParams {
   limit?: number;
 }
 
+export interface CreateBookRequest {
+  title: string;
+  url: string;
+  detail: string;
+  review: string;
+}
+
 export const bookApi = {
   // 書籍リストの取得
   getBooks: async (params?: BookSearchParams): Promise<Book[]> => {
     const response = await apiClient.get<Book[]>('/public/books', { params });
+    return response.data;
+  },
+
+  // 書籍の新規作成
+  createBook: async (data: CreateBookRequest): Promise<Book> => {
+    const response = await apiClient.post<Book>('/books', data);
     return response.data;
   },
 };

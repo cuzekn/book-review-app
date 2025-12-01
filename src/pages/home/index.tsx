@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import toast from 'react-hot-toast';
+import { Link } from 'react-router-dom';
 
 import { BookCard } from '../../components/BookCard';
 import { Header } from '../../components/Header';
@@ -37,7 +38,12 @@ export const Home = () => {
     <>
       <Header />
       <div className="container mx-auto px-4 py-8 pb-24">
-        <h1 className="mb-6 text-2xl font-bold">書籍一覧</h1>
+        <div className="mb-6 flex items-center justify-between">
+          <h1 className="text-2xl font-bold">書籍一覧</h1>
+          <Link to="/new" className="btn btn-primary py-4">
+            書籍を追加
+          </Link>
+        </div>
         {loading ? (
           <div className="flex items-center justify-center py-12">
             <span className="loading loading-spinner loading-lg"></span>

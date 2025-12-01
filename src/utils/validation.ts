@@ -21,3 +21,20 @@ export const NAME_VALIDATION = {
     message: 'ユーザー名は2文字以上である必要があります',
   },
 } as const;
+
+// 書籍レビュー投稿用のバリデーション
+export const TITLE_VALIDATION = {
+  required: 'タイトルは必須です',
+} as const;
+
+export const URL_VALIDATION = {
+  required: 'URLは必須です',
+  pattern: {
+    value: /^https?:\/\/.+/i,
+    message: '正しいURL形式で入力してください',
+  },
+} as const;
+
+export const DETAIL_VALIDATION = {
+  required: '詳細は必須です',
+} as const;

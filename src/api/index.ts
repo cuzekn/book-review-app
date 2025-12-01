@@ -4,6 +4,7 @@ export { authApi } from './auth';
 
 // 型定義のエクスポート
 export type {
+  User,
   SignupRequest,
   LoginRequest,
   UserIconResponse,
@@ -12,4 +13,6 @@ export type {
 
 // 書籍APIのエクスポート
 export { bookApi } from './book';
-export type { Book } from './book';
+
+// 書籍関連の型定義のエクスポート
+export type { Book, BookSearchParams, CreateBookRequest } from './book';
