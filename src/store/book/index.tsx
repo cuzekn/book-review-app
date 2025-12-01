@@ -1,8 +1,9 @@
+/* eslint-disable @typescript-eslint/member-ordering */
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 
 import { bookApi } from '../../api';
-import type { Book } from '../../api';
+import type { Book, CreateBookRequest } from '../../api';
 
 export interface PageState {
   books: Book[];
@@ -21,6 +22,29 @@ const initialState: PageState = {
   loading: false,
   offset: 0,
 };
+
+export interface CreateBookState {
+  book: CreateBookRequest | null;
+  loading: boolean;
+  error: string | null;
+  success: boolean;
+}
+
+const initialCreateBookState: CreateBookState = {
+  book: null,
+  loading: false,
+  error: null,
+  success: false,
+};
+
+// 書籍を投稿する際の非同期thunk
+export const createBook = createAsyncThunk(
+  'page/createBook',
+  async (data: CreateBookRequest): Promise<Book> => {
+    const book = await bookApi.createBook(data);
+    return book;
+  },
+);
 
 // 書籍データを取得する非同期thunk
 export const fetchBooks = createAsyncThunk(
@@ -52,6 +76,30 @@ export const prevPage = createAsyncThunk(
     return newOffset;
   },
 );
+
+export const postSlice = createSlice({
+  name: 'post',
+  initialState: initialCreateBookState,
+  reducers: {},
+  extraReducers: (builder) => {
+    builder
+      .addCase(createBook.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+        state.success = false;
+      })
+      .addCase(createBook.fulfilled, (state, action) => {
+        state.loading = false;
+        state.book = action.payload;
+        state.success = true;
+      })
+      .addCase(createBook.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message ?? '書籍の作成に失敗しました';
+        state.success = false;
+      });
+  },
+});
 
 export const pageSlice = createSlice({
   name: 'page',
