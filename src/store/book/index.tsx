@@ -5,35 +5,39 @@ import type { PayloadAction } from '@reduxjs/toolkit';
 import { bookApi } from '../../api';
 import type { Book, CreateBookRequest } from '../../api';
 
-export interface PageState {
-  books: Book[];
+export interface AsyncState {
+  loading: boolean;
   error: string | null;
+}
+
+const initialAsyncState: AsyncState = {
+  loading: false,
+  error: null,
+};
+
+export interface PageState extends AsyncState {
+  books: Book[];
   hasMore: boolean;
   limit: number;
-  loading: boolean;
   offset: number;
 }
 
 const initialState: PageState = {
+  ...initialAsyncState,
   books: [],
-  error: null,
   hasMore: true,
   limit: 10,
-  loading: false,
   offset: 0,
 };
 
-export interface CreateBookState {
+export interface CreateBookState extends AsyncState {
   book: CreateBookRequest | null;
-  loading: boolean;
-  error: string | null;
   success: boolean;
 }
 
 const initialCreateBookState: CreateBookState = {
+  ...initialAsyncState,
   book: null,
-  loading: false,
-  error: null,
   success: false,
 };
 
@@ -139,6 +143,44 @@ export const pageSlice = createSlice({
       // prevPageの処理
       .addCase(prevPage.fulfilled, (state, action) => {
         state.offset = action.payload;
+      });
+  },
+});
+
+export interface BookDetailState extends AsyncState {
+  book: Book | null;
+}
+
+const initialBookDetailState: BookDetailState = {
+  ...initialAsyncState,
+  book: null,
+};
+
+export const detailBook = createAsyncThunk(
+  'bookDetail/fetchById',
+  async (id: string): Promise<Book> => {
+    const book = await bookApi.getBookById(id);
+    return book;
+  },
+);
+
+export const bookDetailSlice = createSlice({
+  name: 'bookDetail',
+  initialState: initialBookDetailState,
+  reducers: {},
+  extraReducers: (builder) => {
+    builder
+      .addCase(detailBook.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(detailBook.fulfilled, (state, action) => {
+        state.loading = false;
+        state.book = action.payload;
+      })
+      .addCase(detailBook.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message ?? '書籍の取得に失敗しました';
       });
   },
 });
