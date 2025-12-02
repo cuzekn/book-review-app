@@ -1,5 +1,6 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
+import { BookDetail } from '../pages/detail';
 import { Home } from '../pages/home';
 import { Login } from '../pages/login';
 import { New } from '../pages/New';
@@ -15,6 +16,7 @@ export const Router = () => {
         <Route path="/signup" element={<SignUp />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/new" element={<New />} />
+        <Route path="/books/:id" element={<BookDetail />} />
       </Routes>
     </BrowserRouter>
   );

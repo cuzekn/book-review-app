@@ -29,6 +29,12 @@ export const bookApi = {
     return response.data;
   },
 
+  // 書籍の個別取得
+  getBookById: async (id: string): Promise<Book> => {
+    const response = await apiClient.get<Book>(`/books/${id}`);
+    return response.data;
+  },
+
   // 書籍の新規作成
   createBook: async (data: CreateBookRequest): Promise<Book> => {
     const response = await apiClient.post<Book>('/books', data);

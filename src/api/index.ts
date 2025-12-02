@@ -16,3 +16,9 @@ export { bookApi } from './book';
 
 // 書籍関連の型定義のエクスポート
 export type { Book, BookSearchParams, CreateBookRequest } from './book';
+
+// ログAPIのエクスポート
+export { logApi } from './log';
+
+// ログ関連の型定義のエクスポート
+export type { LogBookSelectionRequest } from './log';
