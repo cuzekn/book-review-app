@@ -108,12 +108,22 @@ export const BookDetail = () => {
                   <p className="text-sm text-gray-500">投稿者</p>
                   <p className="font-semibold">{book.reviewer}</p>
                 </div>
-                <button
-                  onClick={() => navigate('/')}
-                  className="btn btn-outline"
-                >
-                  一覧に戻る
-                </button>
+                <div>
+                  {book.isMine && (
+                    <button
+                      onClick={() => navigate(`/books/${book.id}/edit`)}
+                      className="btn btn-primary mr-4 px-16"
+                    >
+                      編集する
+                    </button>
+                  )}
+                  <button
+                    onClick={() => navigate('/')}
+                    className="btn btn-outline"
+                  >
+                    一覧に戻る
+                  </button>
+                </div>
               </div>
             </div>
           </div>
