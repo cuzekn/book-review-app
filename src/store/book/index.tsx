@@ -201,3 +201,51 @@ export const updateBookSlice = createSlice({
       });
   },
 });
+
+// 書籍を削除する際の非同期thunk
+export const deleteBook = createAsyncThunk(
+  'deleteBook/delete',
+  async (id: string): Promise<void> => {
+    await bookApi.deleteBook(id);
+  },
+);
+
+export interface DeleteBookState extends AsyncState {
+  success: boolean;
+}
+
+const initialDeleteBookState: DeleteBookState = {
+  ...initialAsyncState,
+  success: false,
+};
+
+export const deleteBookSlice = createSlice({
+  name: 'deleteBook',
+  initialState: initialDeleteBookState,
+  reducers: {
+    resetDeleteState: (state) => {
+      state.loading = false;
+      state.error = null;
+      state.success = false;
+    },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(deleteBook.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+        state.success = false;
+      })
+      .addCase(deleteBook.fulfilled, (state) => {
+        state.loading = false;
+        state.success = true;
+      })
+      .addCase(deleteBook.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message ?? '書籍の削除に失敗しました';
+        state.success = false;
+      });
+  },
+});
+
+export const { resetDeleteState } = deleteBookSlice.actions;

@@ -47,4 +47,9 @@ export const bookApi = {
     const response = await apiClient.put<Book>(`/books/${id}`, data);
     return response.data;
   },
+
+  // 書籍の削除
+  deleteBook: async (id: string): Promise<void> => {
+    await apiClient.delete(`/books/${id}`);
+  },
 };

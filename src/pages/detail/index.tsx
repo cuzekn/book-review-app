@@ -1,11 +1,13 @@
 import { useEffect } from 'react';
 import toast from 'react-hot-toast';
+import { MdDelete } from 'react-icons/md';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { logApi } from '../../api';
 import { Header } from '../../components/Header';
 import { useAppDispatch, useAppSelector } from '../../store';
-import { detailBook } from '../../store/book';
+import { deleteBook, detailBook, resetDeleteState } from '../../store/book';
+import { getApiErrorMessage } from '../../utils/errorHandling';
 
 export const BookDetail = () => {
   const dispatch = useAppDispatch();
@@ -13,6 +15,7 @@ export const BookDetail = () => {
   const { id } = useParams<{ id: string }>();
 
   const { book, loading } = useAppSelector((state) => state.bookDetail);
+  const { loading: isDeleting } = useAppSelector((state) => state.deleteBook);
 
   useEffect(() => {
     if (!id) {
@@ -62,6 +65,26 @@ export const BookDetail = () => {
     );
   }
 
+  const handleDelete = async () => {
+    if (!window.confirm('本当にこの書籍を削除しますか？')) {
+      return;
+    }
+
+    try {
+      await dispatch(deleteBook(book.id)).unwrap();
+      dispatch(resetDeleteState());
+      toast.success('書籍を削除しました');
+      navigate('/');
+    } catch (error) {
+      const errorMessage = getApiErrorMessage(
+        error,
+        '削除に失敗しました。もう一度お試しください。',
+      );
+      toast.error(errorMessage);
+      dispatch(resetDeleteState());
+    }
+  };
+
   return (
     <>
       <Header />
@@ -108,14 +131,29 @@ export const BookDetail = () => {
                   <p className="text-sm text-gray-500">投稿者</p>
                   <p className="font-semibold">{book.reviewer}</p>
                 </div>
-                <div>
+                <div className="flex items-center gap-4">
                   {book.isMine && (
-                    <button
-                      onClick={() => navigate(`/books/${book.id}/edit`)}
-                      className="btn btn-primary mr-4 px-16"
-                    >
-                      編集する
-                    </button>
+                    <>
+                      <button
+                        onClick={handleDelete}
+                        disabled={isDeleting}
+                        className="btn btn-ghost btn-sm"
+                        aria-label="書籍を削除"
+                      >
+                        {isDeleting ? (
+                          <span className="loading loading-spinner loading-sm hover:text-red-50"></span>
+                        ) : (
+                          <MdDelete size={24} className="text-red-500" />
+                        )}
+                      </button>
+                      <button
+                        onClick={() => navigate(`/books/${book.id}/edit`)}
+                        className="btn btn-primary px-16"
+                        disabled={isDeleting}
+                      >
+                        編集する
+                      </button>
+                    </>
                   )}
                   <button
                     onClick={() => navigate('/')}
