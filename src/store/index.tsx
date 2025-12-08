@@ -4,13 +4,20 @@ import { useDispatch, useSelector } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
 
 import { authSlice } from './auth';
-import { bookDetailSlice, pageSlice } from './book';
+import {
+  bookDetailSlice,
+  deleteBookSlice,
+  pageSlice,
+  updateBookSlice,
+} from './book';
 
 export const store = configureStore({
   reducer: {
     auth: authSlice.reducer,
     page: pageSlice.reducer,
     bookDetail: bookDetailSlice.reducer,
+    updateBook: updateBookSlice.reducer,
+    deleteBook: deleteBookSlice.reducer,
   },
 });
 

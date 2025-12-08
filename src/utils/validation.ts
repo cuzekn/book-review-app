@@ -38,3 +38,7 @@ export const URL_VALIDATION = {
 export const DETAIL_VALIDATION = {
   required: '詳細は必須です',
 } as const;
+
+export const REVIEW_VALIDATION = {
+  required: '感想は必須です',
+} as const;

@@ -30,17 +30,6 @@ const initialState: PageState = {
   offset: 0,
 };
 
-export interface CreateBookState extends AsyncState {
-  book: CreateBookRequest | null;
-  success: boolean;
-}
-
-const initialCreateBookState: CreateBookState = {
-  ...initialAsyncState,
-  book: null,
-  success: false,
-};
-
 // 書籍を投稿する際の非同期thunk
 export const createBook = createAsyncThunk(
   'page/createBook',
@@ -80,30 +69,6 @@ export const prevPage = createAsyncThunk(
     return newOffset;
   },
 );
-
-export const postSlice = createSlice({
-  name: 'post',
-  initialState: initialCreateBookState,
-  reducers: {},
-  extraReducers: (builder) => {
-    builder
-      .addCase(createBook.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-        state.success = false;
-      })
-      .addCase(createBook.fulfilled, (state, action) => {
-        state.loading = false;
-        state.book = action.payload;
-        state.success = true;
-      })
-      .addCase(createBook.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.error.message ?? '書籍の作成に失敗しました';
-        state.success = false;
-      });
-  },
-});
 
 export const pageSlice = createSlice({
   name: 'page',
@@ -167,7 +132,13 @@ export const detailBook = createAsyncThunk(
 export const bookDetailSlice = createSlice({
   name: 'bookDetail',
   initialState: initialBookDetailState,
-  reducers: {},
+  reducers: {
+    clearBookDetail: (state) => {
+      state.book = null;
+      state.loading = false;
+      state.error = null;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(detailBook.pending, (state) => {
@@ -184,3 +155,97 @@ export const bookDetailSlice = createSlice({
       });
   },
 });
+
+export const { clearBookDetail } = bookDetailSlice.actions;
+
+// 書籍を更新する際の非同期thunk
+export interface UpdateBookParams extends AsyncState {
+  book: Book | null;
+  success: boolean;
+}
+
+const initialUpdateBookState: UpdateBookParams = {
+  ...initialAsyncState,
+  book: null,
+  success: false,
+};
+
+export const updateBook = createAsyncThunk(
+  'updateBook/update',
+  async (params: { id: string; data: CreateBookRequest }): Promise<Book> => {
+    const book = await bookApi.updateBook(params.id, params.data);
+    return book;
+  },
+);
+
+export const updateBookSlice = createSlice({
+  name: 'updateBook',
+  initialState: initialUpdateBookState,
+  reducers: {},
+  extraReducers: (builder) => {
+    builder
+      .addCase(updateBook.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+        state.success = false;
+      })
+      .addCase(updateBook.fulfilled, (state, action) => {
+        state.loading = false;
+        state.book = action.payload;
+        state.success = true;
+      })
+      .addCase(updateBook.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message ?? '書籍の更新に失敗しました';
+        state.success = false;
+      });
+  },
+});
+
+// 書籍を削除する際の非同期thunk
+export const deleteBook = createAsyncThunk(
+  'deleteBook/delete',
+  async (id: string): Promise<void> => {
+    await bookApi.deleteBook(id);
+  },
+);
+
+export interface DeleteBookState extends AsyncState {
+  success: boolean;
+}
+
+const initialDeleteBookState: DeleteBookState = {
+  ...initialAsyncState,
+  success: false,
+};
+
+export const deleteBookSlice = createSlice({
+  name: 'deleteBook',
+  initialState: initialDeleteBookState,
+  reducers: {
+    resetDeleteState: (state) => {
+      state.loading = false;
+      state.error = null;
+      state.success = false;
+    },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(deleteBook.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+        state.success = false;
+      })
+      .addCase(deleteBook.fulfilled, (state) => {
+        state.loading = false;
+        state.success = true;
+      })
+      .addCase(deleteBook.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message ?? '書籍の削除に失敗しました';
+        state.success = false;
+      });
+  },
+});
+
+export const { resetDeleteState } = deleteBookSlice.actions;

@@ -8,6 +8,7 @@ export interface Book {
   detail: string;
   review: string;
   reviewer: string;
+  isMine: boolean;
 }
 
 export interface BookSearchParams {
@@ -39,5 +40,16 @@ export const bookApi = {
   createBook: async (data: CreateBookRequest): Promise<Book> => {
     const response = await apiClient.post<Book>('/books', data);
     return response.data;
+  },
+
+  // 書籍の更新
+  updateBook: async (id: string, data: CreateBookRequest): Promise<Book> => {
+    const response = await apiClient.put<Book>(`/books/${id}`, data);
+    return response.data;
+  },
+
+  // 書籍の削除
+  deleteBook: async (id: string): Promise<void> => {
+    await apiClient.delete(`/books/${id}`);
   },
 };
