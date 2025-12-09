@@ -1,18 +1,17 @@
 /* eslint-disable @typescript-eslint/member-ordering */
-import { useState } from 'react';
 import { useForm, type SubmitHandler } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 
 import { FormInput } from '../../components/FormInput';
 import { Header } from '../../components/Header';
-import { RatingFormField } from '../../components/RatingFormField';
 import { useAppDispatch } from '../../store';
 import { createBook } from '../../store/book';
 import { getApiErrorMessage } from '../../utils/errorHandling';
-import { AUTH_MESSAGES, REVIEW_MESSAGES } from '../../utils/messages';
+import { AUTH_MESSAGES } from '../../utils/messages';
 import {
   DETAIL_VALIDATION,
+  REVIEW_VALIDATION,
   TITLE_VALIDATION,
   URL_VALIDATION,
 } from '../../utils/validation';
@@ -21,12 +20,12 @@ type NewBookInputs = {
   title: string;
   url: string;
   detail: string;
+  review: string;
 };
 
 export const New = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const [review, setReview] = useState(0);
 
   const {
     register,
@@ -43,15 +42,8 @@ export const New = () => {
       return;
     }
 
-    // 評価のバリデーション
-    if (review === 0) {
-      toast.error(REVIEW_MESSAGES.REVIEW_REQUIRED);
-      return;
-    }
-
     try {
-      const bookData = { ...data, review: review.toString() };
-      await dispatch(createBook(bookData)).unwrap();
+      await dispatch(createBook(data)).unwrap();
       toast.success('投稿しました');
       navigate('/');
     } catch (error) {
@@ -77,6 +69,7 @@ export const New = () => {
                 type="text"
                 id="title"
                 label="タイトル"
+                placeholder="タイトルを入力して下さい。"
                 {...register('title', TITLE_VALIDATION)}
                 error={errors.title}
               />
@@ -84,6 +77,7 @@ export const New = () => {
                 type="text"
                 id="url"
                 label="URL"
+                placeholder="https://example.com"
                 {...register('url', URL_VALIDATION)}
                 error={errors.url}
               />
@@ -91,10 +85,18 @@ export const New = () => {
                 type="text"
                 id="detail"
                 label="詳細"
+                placeholder="詳細を入力して下さい。"
                 {...register('detail', DETAIL_VALIDATION)}
                 error={errors.detail}
               />
-              <RatingFormField value={review} onChange={setReview} required />
+              <FormInput
+                type="text"
+                id="review"
+                label="レビュー"
+                placeholder="レビューを入力して下さい。"
+                {...register('review', REVIEW_VALIDATION)}
+                error={errors.review}
+              />
               <div className="mt-8 flex justify-end gap-3">
                 <button
                   type="button"

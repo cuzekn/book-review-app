@@ -12,12 +12,21 @@ import { getApiErrorMessage } from '../../utils/errorHandling';
 export const BookDetail = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const token = localStorage.getItem('token');
   const { id } = useParams<{ id: string }>();
 
   const { book, loading } = useAppSelector((state) => state.bookDetail);
   const { loading: isDeleting } = useAppSelector((state) => state.deleteBook);
 
   useEffect(() => {
+    // トークンがない場合はログインページにリダイレクト
+    if (!token) {
+      toast.error('ログインが必要です', { id: 'auth-required' });
+      navigate('/login');
+      return;
+    }
+
+    // IDがない場合はホームにリダイレクト
     if (!id) {
       navigate('/');
       return;
@@ -35,7 +44,7 @@ export const BookDetail = () => {
     logApi.logBookSelection(id).catch((error) => {
       console.error('Failed to log book selection:', error);
     });
-  }, [dispatch, id, navigate]);
+  }, [dispatch, id, navigate, token]);
 
   // ローディング中
   if (loading) {
@@ -119,7 +128,7 @@ export const BookDetail = () => {
 
               <div>
                 <h2 className="mb-2 text-sm font-semibold text-gray-500">
-                  感想
+                  レビュー
                 </h2>
                 <p className="whitespace-pre-wrap text-base">{book.review}</p>
               </div>

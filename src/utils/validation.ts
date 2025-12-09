@@ -40,5 +40,5 @@ export const DETAIL_VALIDATION = {
 } as const;
 
 export const REVIEW_VALIDATION = {
-  required: '感想は必須です',
+  required: 'レビューは必須です',
 } as const;

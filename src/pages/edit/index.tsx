@@ -140,8 +140,8 @@ export const BookEdit = () => {
               <FormInput
                 type="text"
                 id="review"
-                label="感想"
-                placeholder="感想を入力して下さい。"
+                label="レビュー"
+                placeholder="レビューを入力して下さい。"
                 {...register('review', REVIEW_VALIDATION)}
                 error={errors.review}
               />
